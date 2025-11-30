@@ -18,37 +18,138 @@ public class laneChange {
         this.length = length;
     }
     
-    /*returns the time until it is safe to change lanes
-     * precondition: velocity of current car is constant
+    /**
+     * returns the factors (time and acceleration) needed for a successful lane change
      */
-    public String timeTillSafe() {
-        double precedingBackToCurrentFront = precedingCar.distance - (0.5 * precedingCar.length) - (0.5 * length);
-        double currentBackToFollowingFront = followingCar.distance - (0.5 * length) - (0.5 * followingCar.length); 
-        
-        if(precedingCar.acceleration < 0 && followingCar == null) { // when preceding car is slowing down and there's no following car
-            return timePrecedingSlowing(precedingBackToCurrentFront) + " seconds";
-        } else if(followingCar.acceleration > 0 && precedingCar == null) { // when following car is speeding up and there's no preceding car
-            return timeFollowingSpeedingUp(currentBackToFollowingFront) + " seconds";
+    public String laneChangeFactorsNeeded() {
+        if(precedingCar == null && followingCar == null) {
+            return("Time: 0\nAcceleration: 0");
+        } else if (precedingCar != null && followingCar == null) {
+            if(isInTheWay(precedingCar)) { //the preceding car is in the way
+                if(precedingCar.acceleration == 0) {
+                    return("Acceleration: " + accelerationNeeded(precedingCar));
+                } else if (precedingCar.acceleration > 0) {
+                    return("Time: 0\nAcceleration: 0");
+                } else {
+                    return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0");
+                }
+            } else { // the preceding car is not in the way
+                if (precedingCar.acceleration >= 0) {
+                    return ("Time: 0\nAcceleration: 0");
+                } else {
+                    return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0");
+                }
+            }
+        } else if (precedingCar == null && followingCar != null) {
+            if(isInTheWay(followingCar)) {
+                if(followingCar.acceleration == 0) {
+                    return("Acceleration: " + accelerationNeeded(followingCar));
+                } else if (followingCar.acceleration > 0) {
+                    return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
+                } else {
+                    return ("Time: 0\nAcceleration: 0");
+                }
+            } else {
+                if (followingCar.acceleration <= 0) {
+                    return ("Time: 0\nAcceleration: 0");
+                } else {
+                    return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
+                }
+            }
         } else {
-            return "Unsafe situation. You should go to a different lane."; //ohter cars are gonna crash
+            if(followingCar.acceleration > 0 || precedingCar.acceleration < 0) {
+                return ("The other cars need to change acceleration.");
+            }
+            if(isInTheWay(precedingCar) && isInTheWay(followingCar)) {
+                if(precedingCar.acceleration == 0) {
+                    if(followingCar.acceleration < 0) {
+                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: " + accelerationNeeded());
+                        //need to wait for FC to slow down and also need to decelerate
+                    } else if (followingCar.acceleration == 0){
+                        return ("The other cars need to change acceleration.");
+                    }
+                } else if (precedingCar.acceleration > 0) {
+                    if(followingCar.acceleration < 0) {
+                        //need to wait for both to be out of way, a = 0;
+                    } else if (followingCar.acceleration == 0) {
+                        //need to wait for PC to speed up and also need to accelerate 
+                    }
+                }
+            } else if (isInTheWay(precedingCar) && !isInTheWay(followingCar)) {
+                if(precedingCar.acceleration == 0) {
+                    if(followingCar.acceleration < 0) {
+                        //need to wait for FC to slow down out of the way and also need to decelerate
+                    } else if (followingCar.acceleration == 0){
+                        return ("The other cars need to change acceleration.");
+                    }
+                } else if (precedingCar.acceleration > 0) {
+                    if(followingCar.acceleration < 0) {
+                        //need to wait for precedingCar to be out of the way, a = 0
+                    } else if (followingCar.acceleration == 0) {
+                        //need to wait for precedingCar to be out of the way, a = 0
+                    }
+                }                
+            } else if (!isInTheWay(precedingCar) && isInTheWay(followingCar)) {
+                if(precedingCar.acceleration == 0) {
+                    if(followingCar.acceleration < 0) {
+                        //need to wait for followingCar to be out of the way, a = 0
+                    } else if (followingCar.acceleration == 0){
+                        return ("The other cars need to change acceleration.");
+                    }
+                } else if (precedingCar.acceleration > 0) {
+                    if(followingCar.acceleration < 0) {
+                        //need to wait for followingCar to be out of the way, a = 0
+                    } else if (followingCar.acceleration == 0) {
+                        //need to accelerate past followingCar once precedingCar has accelerated far enough away
+                    }
+                }                
+            } else if (!isInTheWay(precedingCar) && !isInTheWay(followingCar)) {
+                if(precedingCar.acceleration == 0) {
+                    if(followingCar.acceleration < 0) {
+                        //can change lanes instantly, a = 0
+                    } else if (followingCar.acceleration == 0){
+                        //can change lanes instantly, a = 0
+                    }
+                } else if (precedingCar.acceleration > 0) {
+                    if(followingCar.acceleration < 0) {
+                        //can change lanes instantly, a = 0
+                    } else if (followingCar.acceleration == 0) {
+                        //can change lanes instantly, a = 0
+                    }
+                }                
+            }
+        }
+    }
+    /**
+     * Returns whether the given Car is in the way
+     */
+    private boolean isInTheWay(Car car) {
+        return car.distance < ((0.5 * car.length) + (0.5 * length));
+    }
+    /*returns the time until it is safe to change lanes
+     * precondition: otherCar is the preceding or following car
+     */
+    public double timeTillSafe(Car otherCar) {
+        if(otherCar.equals(precedingCar)) {
+            double precedingBackToCurrentFront = precedingCar.distance - (0.5 * precedingCar.length) - (0.5 * length);
+            return timePrecedingSlowing(precedingBackToCurrentFront);
+        } else if (otherCar.equals(followingCar)) {
+            double currentBackToFollowingFront = followingCar.distance - (0.5 * length) - (0.5 * followingCar.length); 
+            return timeFollowingSpeedingUp(currentBackToFollowingFront);
         }
     }
     
     /*
-     * precondition: velocities of preceding and following cars are constant
+     * precondition: otherCar is the preceding or following car
      * can return positive or negative acceleration value
      */
-    public double accelerationNeeded() {
-        double currentFrontToPrecedingBack = (0.5 * length) + (0.5 * precedingCar.length) - precedingCar.distance;
-        double followingFrontToCurrentBack = (0.5 * length) + (0.5 * followingCar.length) - followingCar.distance;
-        if(followingCar == null && !(precedingCar == null)) {
+    public double accelerationNeeded(Car otherCar) {
+        if(otherCar.equals(precedingCar)) {
+            double currentFrontToPrecedingBack = (0.5 * length) + (0.5 * precedingCar.length) - precedingCar.distance;
             return (currentFrontToPrecedingBack - (1.5 * velocity)) / (Math.pow(1.5, 2) * 0.5);
-        } else if (precedingCar == null && !(followingCar == null)) {
+        } else if (otherCar.equals(followingCar)){
+            double followingFrontToCurrentBack = (0.5 * length) + (0.5 * followingCar.length) - followingCar.distance;
             return (followingFrontToCurrentBack - (1.5 * velocity)) / (Math.pow(1.5, 2) * 0.5);
-        } else if (precedingCar == null && followingCar == null){
-            return
-        } else {
-            
         }
     }
     
