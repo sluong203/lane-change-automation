@@ -28,14 +28,18 @@ public class laneChange {
             if(isInTheWay(precedingCar)) { //the preceding car is in the way
                 if(precedingCar.acceleration == 0) {
                     return("Acceleration: " + accelerationNeeded(precedingCar));
+                    //need to decelerate
                 } else if (precedingCar.acceleration > 0) {
                     return("Time: 0\nAcceleration: 0");
+                    //can change lanes whenever
                 } else {
                     return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0");
+                    //need to wait for preceding car clears current car
                 }
             } else { // the preceding car is not in the way
                 if (precedingCar.acceleration >= 0) {
                     return ("Time: 0\nAcceleration: 0");
+                    //can change lanes whenever
                 } else {
                     return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0");
                 }
@@ -63,57 +67,75 @@ public class laneChange {
             if(isInTheWay(precedingCar) && isInTheWay(followingCar)) {
                 if(precedingCar.acceleration == 0) {
                     if(followingCar.acceleration < 0) {
-                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: " + accelerationNeeded());
+                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: " + accelerationNeeded(precedingCar));
                         //need to wait for FC to slow down and also need to decelerate
                     } else if (followingCar.acceleration == 0){
                         return ("The other cars need to change acceleration.");
                     }
                 } else if (precedingCar.acceleration > 0) {
                     if(followingCar.acceleration < 0) {
+                        double timeFC = timeTillSafe(followingCar);
+                        double timePC = timeTillSafe(precedingCar);
+                        double largerTime = timeFC;
+                        if (timePC > timeFC) {
+                            largerTime = timePC;
+                        }
+                        return("Time: " + largerTime + "\nAcceleration: 0");
                         //need to wait for both to be out of way, a = 0;
                     } else if (followingCar.acceleration == 0) {
+                        return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: " + accelerationNeeded(followingCar));
                         //need to wait for PC to speed up and also need to accelerate 
                     }
                 }
             } else if (isInTheWay(precedingCar) && !isInTheWay(followingCar)) {
                 if(precedingCar.acceleration == 0) {
                     if(followingCar.acceleration < 0) {
+                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: " + accelerationNeeded(precedingCar));
                         //need to wait for FC to slow down out of the way and also need to decelerate
                     } else if (followingCar.acceleration == 0){
                         return ("The other cars need to change acceleration.");
                     }
                 } else if (precedingCar.acceleration > 0) {
                     if(followingCar.acceleration < 0) {
+                        return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0");
                         //need to wait for precedingCar to be out of the way, a = 0
                     } else if (followingCar.acceleration == 0) {
+                        return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0");
                         //need to wait for precedingCar to be out of the way, a = 0
                     }
                 }                
             } else if (!isInTheWay(precedingCar) && isInTheWay(followingCar)) {
                 if(precedingCar.acceleration == 0) {
                     if(followingCar.acceleration < 0) {
+                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
                         //need to wait for followingCar to be out of the way, a = 0
                     } else if (followingCar.acceleration == 0){
                         return ("The other cars need to change acceleration.");
                     }
                 } else if (precedingCar.acceleration > 0) {
                     if(followingCar.acceleration < 0) {
+                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
                         //need to wait for followingCar to be out of the way, a = 0
                     } else if (followingCar.acceleration == 0) {
+                        return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: " + accelerationNeeded(followingCar));
                         //need to accelerate past followingCar once precedingCar has accelerated far enough away
                     }
                 }                
             } else if (!isInTheWay(precedingCar) && !isInTheWay(followingCar)) {
                 if(precedingCar.acceleration == 0) {
                     if(followingCar.acceleration < 0) {
+                        return ("Time: 0\nAcceleration: 0");
                         //can change lanes instantly, a = 0
                     } else if (followingCar.acceleration == 0){
+                        return ("Time: 0\nAcceleration: 0");
                         //can change lanes instantly, a = 0
                     }
                 } else if (precedingCar.acceleration > 0) {
                     if(followingCar.acceleration < 0) {
+                        return ("Time: 0\nAcceleration: 0");
                         //can change lanes instantly, a = 0
                     } else if (followingCar.acceleration == 0) {
+                        return ("Time: 0\nAcceleration: 0");
                         //can change lanes instantly, a = 0
                     }
                 }                
