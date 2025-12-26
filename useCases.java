@@ -5,6 +5,7 @@
  * @author (your name)
  * @version (a version number or a date)
  */
+/*
 public class useCases
 {
     public static void method() {
@@ -136,4 +137,4 @@ public class useCases
             }
         }
     }
-}
+} */
