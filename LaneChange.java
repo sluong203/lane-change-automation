@@ -231,7 +231,7 @@ public class LaneChange {
                 } else if (precedingCar.acceleration > 0) {
                     if(followingCar.acceleration <= 0) {
                         return("Time: 0\nAcceleration: 0");
-                    } else if (followingCar.acceleration > 0) {
+                    } else { //followingCar.acceleration > 0
                         if(gapFC - displacementFC >= 0) {
                             return("Time: 0\nAcceleration: 0");
                         } else {
