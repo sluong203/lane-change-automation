@@ -145,7 +145,6 @@ public class LaneChange {
                             return ("The other cars need to change acceleration.");
                         }
                     } else { //followingCar.acceleration < 0 ?????
-                        
                         if (precedingCar.acceleration >= followingCar.acceleration) {
                             if(gap - displacement >= precedingCar.length) {
                                 return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0");
@@ -204,20 +203,62 @@ public class LaneChange {
                 } else { //followingCar.acceleration < 0
                     double displacement = (precedingCar.velocity * timeTillSafe(followingCar)) + 
                                             (0.5 * precedingCar.acceleration * timeTillSafe(followingCar));
-                    if (precedingCar.acceleration == 0) {
-                        if(gap + displacement >= overlap) {
+                    if (precedingCar.acceleration >= 0) {
+                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
+                    } else {
+                        if(gap + displacement >= 0) {
                             return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
                         } else {
                             return ("The other cars need to change acceleration.");
                         }
-                    } else if (precedingCar.acceleration > 0) {
-                        
-                    } else {
-                        
                     }
                 }
             } else {
-                
+                double gapPC = Math.abs(precedingCar.distance) - (0.5 * length + 0.5 * precedingCar.length);
+                double gapFC = Math.abs(followingCar.distance) - (0.5 * length + 0.5 * followingCar.length);
+                double displacementPC = (precedingCar.velocity * 1.5) + (0.5 * precedingCar.acceleration * 1.5); //calc disp over x secs?
+                double displacementFC = (followingCar.velocity * 1.5) + (0.5 * followingCar.acceleration * 1.5);
+                if(precedingCar.acceleration == 0) {
+                    if(followingCar.acceleration <= 0) {
+                        return("Time: 0\nAcceleration: 0");
+                    } else { //followingCar.acceleration > 0
+                        if(gapFC - displacementFC >= 0) {
+                            return("Time: 0\nAcceleration: 0");
+                        } else {
+                            return ("The other cars need to change acceleration.");
+                        }
+                    }
+                } else if (precedingCar.acceleration > 0) {
+                    if(followingCar.acceleration <= 0) {
+                        return("Time: 0\nAcceleration: 0");
+                    } else if (followingCar.acceleration > 0) {
+                        if(gapFC - displacementFC >= 0) {
+                            return("Time: 0\nAcceleration: 0");
+                        } else {
+                            return ("The other cars need to change acceleration.");
+                        }    
+                    }
+                } else { //precedingCar.acceleration < 0
+                    if(followingCar.acceleration == 0) {
+                        if(gapPC + displacementPC >= 0) {
+                            return("Time: 0\nAcceleration: 0");
+                        } else {
+                            return ("The other cars need to change acceleration.");
+                        }
+                    } else if (followingCar.acceleration > 0) {
+                        if(gapPC + displacementPC >= 0) {
+                            return("Time: 0\nAcceleration: 0");
+                        } else {
+                            return ("The other cars need to change acceleration.");
+                        }
+                    } else {
+                        if(gapPC + displacementPC >= 0) {
+                            return("Time: 0\nAcceleration: 0");
+                        } else {
+                            return ("The other cars need to change acceleration.");
+                        }
+                    }
+                }
             }
         }
     }
