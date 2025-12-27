@@ -86,8 +86,8 @@ public class LaneChange {
                     }
                 } else { //precedingCar.acceleration < 0
                     if(followingCar.acceleration < 0) {
-                        if (precedingCar.acceleration >= followingCar.acceleration) {
-                            return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
+                        if (Math.abs(precedingCar.acceleration) <= Math.abs(followingCar.acceleration)) {
+                            return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0");
                         } else {
                             return ("The other cars need to change acceleration."); 
                         }
@@ -95,7 +95,7 @@ public class LaneChange {
                         return ("The other cars need to change acceleration.");
                     }
                 }
-            } else if (carInWay(precedingCar).length == 0 || carInWay(followingCar).length == 0) {
+            } else if (carInWay(precedingCar).length != 0 || carInWay(followingCar).length == 0) {
                 Car carInTheWay = carInWay(precedingCar);
                 Car carNotInTheWay = followingCar;
                 if(carInTheWay == null) {
