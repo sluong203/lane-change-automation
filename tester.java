@@ -20,77 +20,28 @@ public class tester
 {
     public static void tester() {
         ArrayList<LaneChange> laneChangeList = new ArrayList<LaneChange>();
-        for(int i = 0; i < 100000; i++) {
-            double PCdistance = (Math.random() * (10+ 1));
-            double PCvelocity = (Math.random() * (33 - 30 + 1)) + 30;
-            double PCacceleration = (Math.random() * (2 + 1));
-            double PClength = (Math.random() * (5 - 4 + 1)) + 4;
-            Car preceding = new Car(PCdistance, PCvelocity, PCacceleration, PClength);
-            
-            double FCdistance = (Math.random() * (10+ 1));
-            double FCvelocity = (Math.random() * (33 - 30 + 1)) + 30;
-            double FCacceleration = (Math.random() * (2 + 1));
-            double FClength = (Math.random() * (5 - 4 + 1)) + 4;
-            Car following = new Car(FCdistance, FCvelocity, FCacceleration, FClength);
-            
-            double CCvelocity = (Math.random() * (33 - 30 + 1)) + 30;
-            double CClength = (Math.random() * (5 - 4 + 1)) + 4;
-            LaneChange laneChange = new LaneChange(preceding, following, CCvelocity, CClength);
-            
-            laneChangeList.add(laneChange);
-        }
+        System.out.println("PC present, in the way, accelerating");
+        Car precedingCar = new Car(1, 30, 0.5, 4.5);
+        LaneChange laneChange = new LaneChange(precedingCar, null, 30, 5);
+        System.out.println(laneChange);
+        System.out.println(laneChange.factorsNeeded());
         
-        for(int i = 0; i < 5; i++) {
-            System.out.println(laneChangeList.get(i));
-        }
+        System.out.println("PC present, in the way, decelerating");
         
-        for(LaneChange change : laneChangeList) {
-            System.out.println(change);
-        }
+        System.out.println("PC present, in the way, not accelerating");
         
-        /*
-        FileResource fr = new FileResource();
-        CSVParser parser = fr.getCSVParser();
+        System.out.println("PC present and not in the way");
         
-        ArrayList<Car> carList = new ArrayList<Car>();
-        for(CSVRecord row : parser){
-            if(Integer.parseInt(row.get(0)) == 1) {
-                Car car = new Car(Integer.parseInt(row.get(1)),
-                                    Double.parseDouble(row.get(12)), 
-                                    Double.parseDouble(row.get(6)), 
-                                    Double.parseDouble(row.get(8)), 
-                                    Double.parseDouble(row.get(4)),
-                                    Integer.parseInt(row.get(18)),
-                                    Integer.parseInt(row.get(20)));
-                carList.add(car);
-            }
-        }
+        System.out.println("FC present and in the way");
         
-        ArrayList<laneChange> laneChangeList = new ArrayList<laneChange>();
-        for(Car car : carList) {
-            laneChange change;
-            if(car.precedingId != 0 && car.followingId == 0) {
-                change = new laneChange(carList.get(car.precedingId - 1), null,
-                                                    car.velocity,
-                                                    car.length);
-            } else if (car.precedingId == 0 && car.followingId != 0) {
-                change = new laneChange(null, carList.get(car.followingId - 1),
-                                                    car.velocity,
-                                                    car.length);
-            } else if (car.precedingId != 0 && car.followingId != 0){
-                change = new laneChange(carList.get(car.precedingId - 1), 
-                                                    carList.get(car.followingId - 1),
-                                                    car.velocity,
-                                                    car.length);
-            } else {
-                change = new laneChange(null, null, car.velocity, car.length);
-            }
-            laneChangeList.add(change);
-        }
+        System.out.println("FC present and not in the way");
         
-        for(int i = 0; i < 5; i++) {
-            System.out.println(laneChangeList.get(i));
-        }
-        */
+        System.out.println("Both present and PC in the way");
+        
+        System.out.println("Both present and FC in the way");
+        
+        System.out.println("Both present and neither in the way");
+        
+        System.out.println("Both present and Both in the way");
     }
 }
