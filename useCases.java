@@ -258,3 +258,44 @@ public class useCases
                         }
                     }
                 } */
+// both cars in the way use case (not generalized)
+/*if(precedingCar.acceleration == 0) {
+                    if(followingCar.acceleration < 0) {
+                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: " + 
+                                accelerationNeeded(precedingCar));
+                        //need to wait for FC to slow down THEN decelerate
+                    } else { //followingCar.acceleration >= 0
+                        return ("The other cars need to change acceleration.");
+                    }
+                } else if (precedingCar.acceleration > 0) {
+                    if(followingCar.acceleration < 0) {
+                        double timeFC = timeTillSafe(followingCar);
+                        double timePC = timeTillSafe(precedingCar);
+                        if (timePC > timeFC) {
+                            return("Time: " + timePC + "\nAcceleration: 0");
+                        } else {
+                            return("Time: " + timeFC + "\nAcceleration: 0");
+                        } // return larger time
+                        //need to wait for both to be out of way, a = 0;
+                    } else if (followingCar.acceleration == 0) {
+                        return("Time: " + timeTillSafe(precedingCar) + 
+                                "\nAcceleration: " + accelerationNeeded(followingCar));
+                        //need to wait for PC to speed up THEN accelerate
+                    } else { //followingCar.acceleration > 0
+                        if (precedingCar.acceleration >= followingCar.acceleration) {
+                            return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
+                        } else {
+                            return ("The other cars need to change acceleration."); 
+                        }
+                    }
+                } else { //precedingCar.acceleration < 0
+                    if(followingCar.acceleration < 0) {
+                        if (Math.abs(precedingCar.acceleration) <= Math.abs(followingCar.acceleration)) {
+                            return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0");
+                        } else {
+                            return ("The other cars need to change acceleration."); 
+                        }
+                    } else { //followingCar.acceleration >= 0
+                        return ("The other cars need to change acceleration.");
+                    }
+                } */
