@@ -39,26 +39,20 @@ public class LaneChange {
             }
             if(carInWay(presentCar)) { //the present car is in the way
                 if(presentCar.acceleration == 0) {
-                    return("Acceleration: " + accelerationNeeded(presentCar));
+                    return("Time: 0\nAcceleration: " + accelerationNeeded(presentCar));
                 } else {
                     return("Time: " + timeTillSafe(presentCar) + "\nAcceleration: 0");
                     //need to wait for preceding car clears current car
                 }
             } else { // the present car is not in the way
-                if(presentCar.acceleration == 0) {
-                    return("Time: 0\nAcceleration: 0");
-                } else {
-                    double displacement = (presentCar.velocity * 6) + (0.5 * presentCar.acceleration * 6);
-                    double gap = presentCar.distance - (0.5 * length + 0.5 * presentCar.length);
-                    if(signsMatch(displacement, gap)) {
+                if(closingIn(presentCar)) {
+                    if(staysOutOfWay(presentCar, this.velocity * 3, 6)) {
                         return("Time: 0\nAcceleration: 0");
                     } else {
-                        if(displacement + gap >= this.velocity * 3) {
-                            return("Time: 0\nAcceleration: 0");
-                        } else {
-                            return ("The other car(s) need to change acceleration.");
-                        }
+                        return ("The other car(s) need to change acceleration.");
                     }
+                } else {
+                   return("Time: 0\nAcceleration: 0"); 
                 }
             }
         } else { //both cars are present
@@ -78,12 +72,10 @@ public class LaneChange {
                     if(signsMatch(acceleratingCar.acceleration, acceleratingCar.distance)) {
                         return("Time: " + timeTillSafe(acceleratingCar) + 
                                "\nAcceleration: " + accelerationNeeded(nonAcceleratingCar));
-                    } else {
-                        return ("The other car(s) need to change acceleration.");
                     }
                 } else {
                     if(signsMatch(precedingCar.distance, precedingCar.acceleration) ||
-                                signsMatch(followingCar.distance, followingCar.acceleration)) {
+                                  signsMatch(followingCar.distance, followingCar.acceleration)) {
                         double timeFC = timeTillSafe(followingCar);
                         double timePC = timeTillSafe(precedingCar);
                         if (timePC > timeFC) {
@@ -91,8 +83,6 @@ public class LaneChange {
                         } else {
                             return("Time: " + timeFC + "\nAcceleration: 0");
                         }
-                    } else {
-                        return ("The other car(s) need to change acceleration."); 
                     }
                 }
             } else if(carInWay(precedingCar) || carInWay(followingCar)) {
@@ -100,12 +90,11 @@ public class LaneChange {
                 Car nonBlockingCar = carPositions(precedingCar, followingCar)[1];
                 double gap = Math.abs(nonBlockingCar.distance) - 
                              (0.5 * length + 0.5 * nonBlockingCar.length);
-                double overlap = 0.5*(blockingCar.length + this.length) - Math.abs(blockingCar.distance);
+                double overlap = 0.5 * (blockingCar.length + this.length) - 
+                                 Math.abs(blockingCar.distance);
                 if(blockingCar.acceleration == 0 && nonBlockingCar.acceleration == 0) {
                     if(gap >= overlap + this.velocity * 3) {
                         return("Time: 0" + "\nAcceleration: " + accelerationNeeded(blockingCar));
-                    } else {
-                        return ("The other car(s) need to change acceleration."); 
                     }
                 } else if (blockingCar.acceleration != 0 && nonBlockingCar.acceleration == 0) {
                     if(signsMatch(blockingCar.distance, blockingCar.acceleration)) {
@@ -113,59 +102,34 @@ public class LaneChange {
                     } else {
                         if(gap >= blockingCar.length + this.velocity * 3) {
                             return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
-                        } 
-                        return ("The other car(s) need to change acceleration."); 
+                        }
                     }
                 } else if (blockingCar.acceleration == 0 && nonBlockingCar.acceleration != 0) {
                     if(signsMatch(nonBlockingCar.distance, nonBlockingCar.acceleration)) {
                         return("Time: 0" + "\nAcceleration: " + accelerationNeeded(blockingCar));
                     } else {
-                        double displacementCC = this.velocity * 6;
-                        double displacement = (nonBlockingCar.velocity * 6) + 
-                                                (0.5 * nonBlockingCar.acceleration * 6);
-                        double newGap;
-                        if(nonBlockingCar.equals(precedingCar)) {
-                            newGap = displacement - displacementCC;
-                        } else {
-                            newGap = displacementCC - displacement;
-                        }
-                        if(newGap >= overlap + this.velocity * 3) {
+                        if(staysOutOfWay(nonBlockingCar, overlap + this.velocity * 3, 6)) {
                             return("Time: 0" + "\nAcceleration: " + accelerationNeeded(blockingCar));
-                        } else {
-                            return ("The other car(s) need to change acceleration."); 
                         }
                     }
                 } else {
-                    double displacementCC = this.velocity * timeTillSafe(blockingCar);
-                    double displacement = (nonBlockingCar.velocity * timeTillSafe(blockingCar)) + 
-                                            (0.5 * nonBlockingCar.acceleration * 
-                                            timeTillSafe(blockingCar));
-                    double newGap;
-                    if(nonBlockingCar.equals(precedingCar)) {
-                        newGap = displacement - displacementCC;
-                    } else {
-                        newGap = displacementCC - displacement;
-                    }
                     if(signsMatch(blockingCar.acceleration, nonBlockingCar.acceleration)) {
                         if(signsMatch(nonBlockingCar.distance, nonBlockingCar.acceleration)) {
-                            if(newGap >= blockingCar.length + this.velocity * 3) {
+                            if(staysOutOfWay(nonBlockingCar, blockingCar.length + this.velocity * 3, 
+                                             timeTillSafe(blockingCar))) {
                                 return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
-                            } else {
-                                return ("The other car(s) need to change acceleration."); 
                             }
                         } else {
-                            if(newGap >=  this.velocity * 3) {
+                            if(staysOutOfWay(nonBlockingCar, this.velocity * 3, 
+                                             timeTillSafe(blockingCar))) {
                                 return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
-                            } else {
-                                return ("The other car(s) need to change acceleration."); 
                             }
                         }
                     } else {
                         if(!signsMatch(blockingCar.distance, blockingCar.acceleration)) {
-                            if(newGap >= blockingCar.length + this.velocity * 3) {
+                            if(staysOutOfWay(nonBlockingCar, blockingCar.length + this.velocity * 3, 
+                                             timeTillSafe(blockingCar))) {
                                 return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
-                            } else {
-                                return ("The other car(s) need to change acceleration."); 
                             }
                         } else {
                             return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
@@ -173,10 +137,14 @@ public class LaneChange {
                     }
                 }
             } else {
-                double gapPC = Math.abs(precedingCar.distance) - (0.5 * length + 0.5 * precedingCar.length);
-                double gapFC = Math.abs(followingCar.distance) - (0.5 * length + 0.5 * followingCar.length);
-                double displacementPC = (precedingCar.velocity * 6) + (0.5 * precedingCar.acceleration * 6);
-                double displacementFC = (followingCar.velocity * 6) + (0.5 * followingCar.acceleration * 6);
+                double gapPC = Math.abs(precedingCar.distance) - 
+                               (0.5 * length + 0.5 * precedingCar.length);
+                double gapFC = Math.abs(followingCar.distance) - 
+                               (0.5 * length + 0.5 * followingCar.length);
+                double displacementPC = (precedingCar.velocity * 6) + 
+                                        (0.5 * precedingCar.acceleration * 6);
+                double displacementFC = (followingCar.velocity * 6) + 
+                                        (0.5 * followingCar.acceleration * 6);
                 double displacementCC = this.velocity * 6;
                 double newGapFC = displacementCC - displacementFC;
                 double newGapPC = displacementPC - displacementCC;
@@ -213,8 +181,6 @@ public class LaneChange {
                                                         -(gapAC + gapNAC + this.length + 
                                                         this.velocity * 3));
                                 return("Time: " + time + "\nAcceleration: 0");
-                            } else {
-                                return ("The other car(s) need to change acceleration."); 
                             }
                         }
                     }
@@ -226,8 +192,6 @@ public class LaneChange {
                                 !signsMatch(followingCar.distance, followingCar.acceleration)) {
                         if(newGapPC >= this.velocity * 3 && newGapFC >= this.velocity * 3) {
                             return("Time: 0\nAcceleration: 0");
-                        } else {
-                            return ("The other car(s) need to change acceleration."); 
                         }
                     } else {
                         if(precedingCar.acceleration < 0) {
@@ -245,6 +209,8 @@ public class LaneChange {
                 }
             }
         }
+        
+        return ("The other car(s) need to change acceleration."); 
     }
     
     /**
@@ -254,7 +220,22 @@ public class LaneChange {
      * @return  true if the car is in the way and false if otherwise
      */
     public boolean carInWay(Car otherCar) {
-        return Math.abs(otherCar.distance) < (this.velocity * 3) + (0.5 * (this.length + otherCar.length)); 
+        return Math.abs(otherCar.distance) < 
+               (this.velocity * 3) + (0.5 * (this.length + otherCar.length)); 
+    }
+    
+    public boolean staysOutOfWay(Car car, double distanceNeeded, double time) {
+        double displacementCC = this.velocity * time;
+        double displacementNBC = (0.5 * car.acceleration * Math.pow(time, 2)) + (car.acceleration * time);
+        double newGap = 0;
+        
+        if(car.equals(precedingCar)) {
+            newGap = displacementNBC - displacementCC;
+        } else {
+            newGap = displacementCC - displacementNBC;
+        }
+        
+        return newGap >= distanceNeeded;
     }
     
     /**
@@ -287,7 +268,13 @@ public class LaneChange {
      * @return  true if the signs match and false if otherwise
      */
     public boolean signsMatch(double valueOne, double valueTwo) {
-        return (valueOne > 0 && valueTwo > 0) || (valueOne < 0 && valueTwo < 0 ) || valueOne == valueTwo;
+        return (valueOne > 0 && valueTwo > 0) || 
+               (valueOne < 0 && valueTwo < 0 ) || 
+                valueOne == valueTwo;
+    }
+    
+    public boolean closingIn(Car car) {
+        return signsMatch(car.acceleration, car.distance);
     }
     
     /**
@@ -334,24 +321,6 @@ public class LaneChange {
         } else {
             return solutionTwo;
         }
-    }
-    
-    /**
-     * Getter method for the car preceding the attempting car in the target lane
-     * 
-     * @return  the car in the target lane whose distance to the attempting car is positive
-     */
-    public Car getPrecedingCar() {
-        return precedingCar;
-    }
-    
-    /**
-     * Getter method for the car following the attempting car in the target lane
-     * 
-     * @return  the car in the target lane whose distance to the attempting car is neative
-     */
-    public Car getFollowingCar() {
-        return followingCar;
     }
     
     /**
