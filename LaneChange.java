@@ -71,7 +71,8 @@ public class LaneChange {
                     }
                     if(!closingIn(acceleratingCar)){
                         return("Time: " + timeTillSafe(acceleratingCar) + 
-                               "\nAcceleration: " + accelerationNeeded(nonAcceleratingCar, timeTillSafe(acceleratingCar)));
+                               "\nAcceleration: " + accelerationNeeded(nonAcceleratingCar, 
+                                                                       timeTillSafe(acceleratingCar)));
                     }
                 } else {
                     if(!closingIn(precedingCar) && !closingIn(followingCar)) {
@@ -93,7 +94,7 @@ public class LaneChange {
                 Car nonBlockingCar = carPositions(precedingCar, followingCar)[1];
                 double gap = Math.abs(nonBlockingCar.distance) - 
                              (0.5 * length + 0.5 * nonBlockingCar.length);
-                double overlap = 0.5 * (blockingCar.length + this.length) - 
+                double overlap = (0.5 * (blockingCar.length + this.length)) - 
                                  Math.abs(blockingCar.distance);
                 if(blockingCar.acceleration == 0 && nonBlockingCar.acceleration == 0) {
                     if(gap >= overlap + this.velocity * 3) {
@@ -114,10 +115,7 @@ public class LaneChange {
                 } else {
                     if(signsMatch(blockingCar.acceleration, nonBlockingCar.acceleration)) {
                         if(!closingIn(nonBlockingCar)) {
-                            if(staysOutOfWay(nonBlockingCar, blockingCar.length + 2 * (this.velocity * 3), 
-                                             timeTillSafe(blockingCar))) {
-                                return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
-                            }
+                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
                         } else {
                             if(staysOutOfWay(nonBlockingCar, this.velocity * 3, timeTillSafe(blockingCar))) {
                                 return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
@@ -135,37 +133,17 @@ public class LaneChange {
                     }
                 }
             } else {
-                double gapPC = Math.abs(precedingCar.distance) - 
-                               (0.5 * length + 0.5 * precedingCar.length);
-                double gapFC = Math.abs(followingCar.distance) - 
-                               (0.5 * length + 0.5 * followingCar.length);
-                double displacementPC = (precedingCar.velocity * 6) + 
-                                        (0.5 * precedingCar.acceleration * 6);
-                double displacementFC = (followingCar.velocity * 6) + 
-                                        (0.5 * followingCar.acceleration * 6);
-                double displacementCC = this.velocity * 6;
-                double newGapFC = displacementCC - displacementFC;
-                double newGapPC = displacementPC - displacementCC;
                 if(precedingCar.acceleration == 0 && followingCar.acceleration == 0) {
                     return("Time: 0\nAcceleration: 0");
                 } else if (precedingCar.acceleration == 0 || followingCar.acceleration == 0) {
                     Car acceleratingCar;
                     Car nonAcceleratingCar;
-                    double newGapAC;
-                    double gapNAC;
-                    double gapAC;
                     if(precedingCar.acceleration != 0) {
                         acceleratingCar = precedingCar;
                         nonAcceleratingCar = followingCar;
-                        newGapAC = newGapPC;
-                        gapAC = gapPC;
-                        gapNAC = gapFC;
                     } else {
                         acceleratingCar = followingCar;
                         nonAcceleratingCar = precedingCar;
-                        newGapAC = newGapFC;
-                        gapAC = gapFC;
-                        gapNAC = gapPC;
                     }
                     if(!closingIn(acceleratingCar)) {
                         return("Time: 0\nAcceleration: 0");
@@ -177,17 +155,13 @@ public class LaneChange {
                 } else {
                     if(!closingIn(precedingCar) && !closingIn(followingCar)) {
                             return("Time: 0\nAcceleration: 0");
-                    } else if (closingIn(precedingCar) && !closingIn(followingCar)) {
-                        if(staysOutOfWay(precedingCar, this.velocity * 3, 6)) {
-                            return("Time: 0\nAcceleration: 0");
-                        }
-                    } else if (!closingIn(precedingCar) && closingIn(followingCar)) {
-                        if(staysOutOfWay(followingCar, this.velocity * 3, 6)) {
+                    } else if (closingIn(precedingCar) && closingIn(followingCar)) {
+                        if(staysOutOfWay(followingCar, this.velocity * 3, 6) && 
+                           staysOutOfWay(precedingCar, this.velocity * 3, 6)) {
                             return("Time: 0\nAcceleration: 0");
                         }
                     } else {
-                        if(staysOutOfWay(followingCar, this.velocity * 3, 6) && 
-                           staysOutOfWay(precedingCar, this.velocity * 3, 6)) {
+                        if(staysOutOfWay(followingCar, this.velocity * 3, 6)) {
                             return("Time: 0\nAcceleration: 0");
                         }
                     }
@@ -277,7 +251,7 @@ public class LaneChange {
     public double timeTillSafe(Car otherCar) {
         double overlap = 0.5*(otherCar.length + this.length) - Math.abs(otherCar.distance);
         double frontToBack = 0.5*(otherCar.length + this.length) + Math.abs(otherCar.distance);
-        if(signsMatch(otherCar.distance, otherCar.acceleration)) {
+        if(closingIn(otherCar)) {
             return quadForm (0.5*Math.abs(otherCar.acceleration), otherCar.velocity, 
                             -overlap - (this.velocity  * 3));
         } else {
