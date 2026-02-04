@@ -1,10 +1,10 @@
 //1234567890123456789012345001234567890123456789012345001234567890123456789012345001234567890623456789012345
 import java.lang.Math;
 /**
- * Write a description of class Car here.
+ * Models a free-flowing highway lane change scenario
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Sofia Luong
+ * @version February 2026
  */
 public class LaneChange {
     private Car precedingCar; //distance should be positive
@@ -56,7 +56,7 @@ public class LaneChange {
                 }
             }
         } else { //both cars are present
-            if (carInWay(precedingCar) && carInWay(followingCar)) {
+            if (carInWay(precedingCar) && carInWay(followingCar)) { //both cars are in the way
                 if (precedingCar.acceleration == 0 && followingCar.acceleration == 0) {
                     return ("The other car(s) need to change acceleration.");
                 } else if (precedingCar.acceleration == 0 || followingCar.acceleration == 0) {
@@ -89,9 +89,13 @@ public class LaneChange {
                         return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
                     }
                 }
-            } else if(carInWay(precedingCar) || carInWay(followingCar)) {
-                Car blockingCar = carPositions(precedingCar, followingCar)[0];
-                Car nonBlockingCar = carPositions(precedingCar, followingCar)[1];
+            } else if(carInWay(precedingCar) || carInWay(followingCar)) { // one car is in the way
+                Car blockingCar = precedingCar; 
+                Car nonBlockingCar = followingCar;
+                if (!carInWay(precedingCar)) {
+                    blockingCar = followingCar; 
+                    nonBlockingCar = precedingCar;
+                }
                 double gap = Math.abs(nonBlockingCar.distance) - 
                              (0.5 * length + 0.5 * nonBlockingCar.length);
                 double overlap = (0.5 * (blockingCar.length + this.length)) - 
@@ -195,28 +199,6 @@ public class LaneChange {
         }
         
         return newGap >= distanceNeeded;
-    }
-    
-    /**
-     * Gives an array where the car in the way is at the 0th index and 
-     * the car not in the way is at the 1st index
-     * 
-     * Precondition: only one of the cars is in the way
-     * 
-     * @param  precedingCar  the car in the target lane that is ahead of the attempting car
-     * @param  followingCar  the car in the target lane that is behind of the attempting car
-     * @return  an array whose indices indicate which car is in the way
-     */
-    public Car[] carPositions(Car precedingCar, Car followingCar) {
-        Car[] array = new Car[2];
-        if (0.5*(precedingCar.length + this.length) - Math.abs(precedingCar.distance) > 0) {
-            array[0] = precedingCar;
-            array[1] = followingCar;
-        } else {
-            array[0] = followingCar;
-            array[1] = precedingCar;
-        }
-        return array;
     }
     
     /**
