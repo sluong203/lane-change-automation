@@ -29,7 +29,7 @@ public class LaneChange {
      */
     public String factorsNeeded() {
         if(precedingCar == null && followingCar == null) {
-            return("Time: 0\nAcceleration: 0");
+            return("Time: 0.0\nAcceleration: 0.0");
         } else if (precedingCar != null || followingCar != null) {
             Car presentCar;
             if(precedingCar != null) {
@@ -39,20 +39,20 @@ public class LaneChange {
             }
             if(carInWay(presentCar)) { //the present car is in the way
                 if(presentCar.acceleration == 0) {
-                    return("Time: 0\nAcceleration: " + accelerationNeeded(presentCar, 6));
+                    return("Time: 0.0\nAcceleration: " + accelerationNeeded(presentCar, 6));
                 } else {
-                    return("Time: " + timeTillSafe(presentCar) + "\nAcceleration: 0");
+                    return("Time: " + timeTillSafe(presentCar) + "\nAcceleration: 0.0");
                     //need to wait for preceding car clears current car
                 }
             } else { // the present car is not in the way
                 if(closingIn(presentCar)) {
                     if(staysOutOfWay(presentCar, this.velocity * 3, 6)) {
-                        return("Time: 0\nAcceleration: 0");
+                        return("Time: 0.0\nAcceleration: 0.0");
                     } else {
                         return ("The other car(s) need to change acceleration.");
                     }
                 } else {
-                   return("Time: 0\nAcceleration: 0"); 
+                   return("Time: 0.0\nAcceleration: 0.0"); 
                 }
             }
         } else { //both cars are present
@@ -79,14 +79,14 @@ public class LaneChange {
                         double timeFC = timeTillSafe(followingCar);
                         double timePC = timeTillSafe(precedingCar);
                         if (timePC > timeFC) {
-                            return("Time: " + timePC + "\nAcceleration: 0");
+                            return("Time: " + timePC + "\nAcceleration: 0.0");
                         } else {
-                            return("Time: " + timeFC + "\nAcceleration: 0");
+                            return("Time: " + timeFC + "\nAcceleration: 0.0");
                         }
                     } else if(closingIn(precedingCar) && !closingIn(followingCar)) {
-                        return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0"); 
+                        return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0.0"); 
                     } else if (!closingIn(precedingCar) && closingIn(followingCar)) {
-                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0");
+                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0.0");
                     }
                 }
             } else if(carInWay(precedingCar) || carInWay(followingCar)) { // one car is in the way
@@ -102,43 +102,43 @@ public class LaneChange {
                                  Math.abs(blockingCar.distance);
                 if(blockingCar.acceleration == 0 && nonBlockingCar.acceleration == 0) {
                     if(gap >= overlap + this.velocity * 3) {
-                        return("Time: 0" + "\nAcceleration: " + accelerationNeeded(blockingCar, 6));
+                        return("Time: 0.0" + "\nAcceleration: " + accelerationNeeded(blockingCar, 6));
                     }
                 } else if (blockingCar.acceleration != 0 && nonBlockingCar.acceleration == 0) {
                     if(!closingIn(blockingCar)) {
-                        return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
+                        return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
                     } else {
                         if(gap >= blockingCar.length + 2 * (this.velocity * 3)) {
-                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
+                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
                         }
                     }
                 } else if (blockingCar.acceleration == 0 && nonBlockingCar.acceleration != 0) {
                     if(staysOutOfWay(nonBlockingCar, overlap + this.velocity * 3, 6)) {
-                        return("Time: 0" + "\nAcceleration: " + accelerationNeeded(blockingCar, 6));
+                        return("Time: 0.0" + "\nAcceleration: " + accelerationNeeded(blockingCar, 6));
                     }
                 } else {
                     if(signsMatch(blockingCar.acceleration, nonBlockingCar.acceleration)) {
                         if(!closingIn(nonBlockingCar)) {
-                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
+                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
                         } else {
                             if(staysOutOfWay(nonBlockingCar, this.velocity * 3, timeTillSafe(blockingCar))) {
-                                return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
+                                return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
                             }
                         }
                     } else {
                         if(!closingIn(nonBlockingCar)) {
-                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
+                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
                         } else {
                             if(staysOutOfWay(nonBlockingCar, blockingCar.length + 2 * (this.velocity * 3), 
                                              timeTillSafe(blockingCar))) {
-                                return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0");
+                                return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
                             }
                         }
                     }
                 }
             } else {
                 if(precedingCar.acceleration == 0 && followingCar.acceleration == 0) {
-                    return("Time: 0\nAcceleration: 0");
+                    return("Time: 0.0\nAcceleration: 0.0");
                 } else if (precedingCar.acceleration == 0 || followingCar.acceleration == 0) {
                     Car acceleratingCar;
                     Car nonAcceleratingCar;
@@ -150,23 +150,23 @@ public class LaneChange {
                         nonAcceleratingCar = precedingCar;
                     }
                     if(!closingIn(acceleratingCar)) {
-                        return("Time: 0\nAcceleration: 0");
+                        return("Time: 0.0\nAcceleration: 0.0");
                     } else {
                         if(staysOutOfWay(acceleratingCar, this.velocity * 3, 6)) {
-                            return("Time: 0\nAcceleration: 0"); 
+                            return("Time: 0.0\nAcceleration: 0.0"); 
                         }
                     }
                 } else {
                     if(!closingIn(precedingCar) && !closingIn(followingCar)) {
-                            return("Time: 0\nAcceleration: 0");
+                            return("Time: 0.0\nAcceleration: 0.0");
                     } else if (closingIn(precedingCar) && closingIn(followingCar)) {
                         if(staysOutOfWay(followingCar, this.velocity * 3, 6) && 
                            staysOutOfWay(precedingCar, this.velocity * 3, 6)) {
-                            return("Time: 0\nAcceleration: 0");
+                            return("Time: 0.0\nAcceleration: 0.0");
                         }
                     } else {
                         if(staysOutOfWay(followingCar, this.velocity * 3, 6)) {
-                            return("Time: 0\nAcceleration: 0");
+                            return("Time: 0.0\nAcceleration: 0.0");
                         }
                     }
                 }
