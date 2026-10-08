@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class SimulatorCar {
     private Vector2D position;
     private Vector2D velocity;
@@ -10,7 +12,15 @@ public class SimulatorCar {
         this.velocity = velocity;
         this.acceleration = acceleration;
         this.length = length;
-        width = 1.8;
+        width = 100;
+    }
+
+    public void update(double time) {
+        double positionX = position.getX() + (-velocity.getX() * time) + (0.5 * Math.pow(acceleration.getX(), 2) * time);
+        double positionY = position.getY() + (-velocity.getY() * time) + (0.5 * Math.pow(acceleration.getY(), 2) * time);
+        position.setX(positionX);
+        position.setY(positionY);
+
     }
 
     public Vector2D getPosition() {
@@ -33,9 +43,5 @@ public class SimulatorCar {
         return width;
     }
 
-    public void update() {
-        position.add(velocity);
-        velocity.add(acceleration);
-    }
 
 }
