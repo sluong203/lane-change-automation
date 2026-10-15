@@ -4,7 +4,7 @@ public class Simulator extends PApplet{
     private int canvasWidth = 800;
     private int canvasHeight = 600;
     private int numCars = 3;
-    double timeScale = 0.05;
+    double timeScale = 0.005;
     double time = 0;
     private ArrayList<SimulatorCar> simulatorCars;
 
@@ -21,22 +21,27 @@ public class Simulator extends PApplet{
 
         simulatorCars = new ArrayList<SimulatorCar>();
 
-        SimulatorCar carOne = new SimulatorCar((new Vector2D(450, 600)), new Vector2D(0, 400), new Vector2D(0, 0), 200);
+        SimulatorCar carOne = new SimulatorCar((new Vector2D(300, 0)), new Vector2D(50, 400), new Vector2D(0, 0), 200);
         simulatorCars.add(carOne);
 
-        SimulatorCar carTwo = new SimulatorCar((new Vector2D(250, 600)), new Vector2D(0, 400), new Vector2D(0, 0), 200);
+        SimulatorCar carTwo = new SimulatorCar((new Vector2D(500, 0)), new Vector2D(0, 400), new Vector2D(0, 0), 200);
         simulatorCars.add(carTwo);
 
         drawCars();
     }
 
     public void draw() {
+        drawScenario();
+    }
+
+    public void drawScenario() {
         background(255);
 
         drawLanes();
         time++;
 
         for(SimulatorCar car : simulatorCars) {
+            displayStats();
             car.update((time / 60.0) * timeScale);
             drawCars();
         }
@@ -52,10 +57,27 @@ public class Simulator extends PApplet{
 
     public void drawCars() {
         for(SimulatorCar car : simulatorCars) {
-            rect((float) (car.getPosition().getX()), (float) (car.getPosition().getY()), (float) car.getWidth(), (float) car.getLength());
+            rect((float) (car.getPosition().getX() - (car.getWidth() / 2.0)), (float) (car.getPosition().getY()), (float) car.getWidth(), (float) car.getLength());
         }
     }
 
+    public void displayStats() {
+        textSize(20);
+        fill(0, 0, 0);
+        int y = 30;
+        text("Time: " + time, 10, y);
+        for(int i = 0; i < simulatorCars.size(); i++) {
+            y += 40;
+            text("Car " + (i + 1) + ": ", 10, y);
+            y += 20;
+            text("Position: " + simulatorCars.get(i).getPosition(), 10, y);
+            y += 20;
+            text("Velocity: " + simulatorCars.get(i).getVelocity(), 10, y);
+            y += 20;
+            text("Acceleration: " +  simulatorCars.get(i).getAcceleration(), 10, y);
+
+        }
+    }
 
 }
 

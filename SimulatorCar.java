@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 
 public class SimulatorCar {
-    private Vector2D position;
-    private Vector2D velocity;
-    private Vector2D acceleration;
+    private Vector2D position; // measured in centimeters
+    private Vector2D velocity; // measured in centimeters per second
+    private Vector2D acceleration; //measured in centimeters per second squared
     private double length; //measured in meters
     private double width;
 
@@ -12,12 +12,12 @@ public class SimulatorCar {
         this.velocity = velocity;
         this.acceleration = acceleration;
         this.length = length;
-        width = 100;
+        width = 150;
     }
 
     public void update(double time) {
-        double positionX = position.getX() + (-velocity.getX() * time) + (0.5 * Math.pow(acceleration.getX(), 2) * time);
-        double positionY = position.getY() + (-velocity.getY() * time) + (0.5 * Math.pow(acceleration.getY(), 2) * time);
+        double positionX = position.getX() + (velocity.getX() * time) + (0.5 * Math.pow(acceleration.getX(), 2) * time);
+        double positionY = position.getY() + (velocity.getY() * time) + (0.5 * Math.pow(acceleration.getY(), 2) * time);
         position.setX(positionX);
         position.setY(positionY);
 
@@ -41,6 +41,10 @@ public class SimulatorCar {
 
     public double getWidth() {
         return width;
+    }
+
+    public String toString() {
+        return "Position: " + position + ", Velocity: " + velocity + ", Acceleration: " + acceleration + ", Length: " + length;
     }
 
 

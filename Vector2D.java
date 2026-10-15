@@ -181,6 +181,6 @@ public class Vector2D {
      * @return a string in the format "[x, y]"
      */
     public String toString() {
-        return "[" + x + ", " + y + "]";
+        return "[" + (int) x + ", " + (int) y + "]";
     }
 }
