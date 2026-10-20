@@ -2,11 +2,12 @@ import processing.core.PApplet;
 import java.util.ArrayList;
 public class Simulator extends PApplet{
     private int canvasWidth = 800;
-    private int canvasHeight = 600;
+    private int canvasHeight = 1000;
     private int numCars = 3;
     double timeScale = 0.005;
     double time = 0;
     private ArrayList<SimulatorCar> simulatorCars;
+    private ArrayList<Scenario> scenarios;
 
     public static void main(String[] args){
         PApplet.main("Simulator");
@@ -19,7 +20,11 @@ public class Simulator extends PApplet{
     public void setup() {
         drawLanes();
 
+        scenarios = buildScenarioList();
+
         simulatorCars = new ArrayList<SimulatorCar>();
+
+        // drawScenario();
 
         SimulatorCar carOne = new SimulatorCar((new Vector2D(300, 0)), new Vector2D(50, 400), new Vector2D(0, 0), 200);
         simulatorCars.add(carOne);
@@ -31,10 +36,6 @@ public class Simulator extends PApplet{
     }
 
     public void draw() {
-        drawScenario();
-    }
-
-    public void drawScenario() {
         background(255);
 
         drawLanes();
@@ -47,10 +48,14 @@ public class Simulator extends PApplet{
         }
     }
 
+//    public void drawScenario() {
+//
+//    }
+
     public void drawLanes () {
-        line(200, 0, 200, 600);
-        line(600, 0, 600, 600);
-        for(int i = 0; i < 600; i += 20) {
+        line(200, 0, 200, 1000);
+        line(600, 0, 600, 1000);
+        for(int i = 0; i < 1000; i += 20) {
             line(400, i, 400, i + 10);
         }
     }

@@ -8,7 +8,7 @@
 public class Car
     {
         // instance variables - replace the example below with your own
-        public double distance; //distance from middle of this.car to middle of current car
+        public double distance; //distance from middle of this.car to middle of current car, 0 means AC
         public double velocity;
         public double acceleration;
         public double length;
