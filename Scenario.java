@@ -28,19 +28,18 @@ public class Scenario {
 
     public ArrayList<SimulatorCar> getCars() {
         ArrayList<SimulatorCar> simulatorCars = new ArrayList<SimulatorCar>();
-
-        Vector2D positionAC = new Vector2D(500, 0);
-        Vector2D velocityAC = new Vector2D(0, cars.get(0).getVelocity());
-        Vector2D accelerationAC = new Vector2D(0, cars.get(0).getAcceleration());
-        double lengthAC = cars.get(0).getLength();
+        Vector2D positionAC = new Vector2D(300, 0);
+        Vector2D velocityAC = new Vector2D(0, cars.get(0).getVelocity() * 20);
+        Vector2D accelerationAC = new Vector2D(0, cars.get(0).getAcceleration() * 20);
+        double lengthAC = cars.get(0).getLength() * 20;
         SimulatorCar attemptingCar = new SimulatorCar(positionAC, velocityAC, accelerationAC, lengthAC);
         simulatorCars.add(attemptingCar);
 
         for (int i = 1; i < cars.size() - 1; i++) {
-            Vector2D position = new Vector2D(300, positionAC.getY() + cars.get(i).getDistance());
-            Vector2D velocity = new Vector2D(0, cars.get(i).getVelocity());
-            Vector2D acceleration = new Vector2D(0, cars.get(i).getAcceleration());
-            double length = cars.get(i).getLength();
+            Vector2D position = new Vector2D(500, 20 * (positionAC.getY() + cars.get(i).getDistance()));
+            Vector2D velocity = new Vector2D(0, 20 * (cars.get(i).getVelocity()));
+            Vector2D acceleration = new Vector2D(0, 20 * (cars.get(i).getAcceleration()));
+            double length = 20 * cars.get(i).getLength();
             SimulatorCar car = new SimulatorCar(position, velocity, acceleration, length);
             simulatorCars.add(car);
         }

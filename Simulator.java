@@ -4,7 +4,7 @@ public class Simulator extends PApplet{
     private int canvasWidth = 800;
     private int canvasHeight = 1000;
     private int numCars = 3;
-    double timeScale = 0.005;
+    double timeScale = 0.0005;
     double time = 0;
     private ArrayList<SimulatorCar> simulatorCars;
     private ArrayList<Scenario> scenarios;
@@ -20,17 +20,9 @@ public class Simulator extends PApplet{
     public void setup() {
         drawLanes();
 
-        scenarios = buildScenarioList();
+        scenarios = ScenarioBuilder.buildScenarios();
 
-        simulatorCars = new ArrayList<SimulatorCar>();
-
-        // drawScenario();
-
-        SimulatorCar carOne = new SimulatorCar((new Vector2D(300, 0)), new Vector2D(50, 400), new Vector2D(0, 0), 200);
-        simulatorCars.add(carOne);
-
-        SimulatorCar carTwo = new SimulatorCar((new Vector2D(500, 0)), new Vector2D(0, 400), new Vector2D(0, 0), 200);
-        simulatorCars.add(carTwo);
+        simulatorCars = scenarios.get(0).getCars();
 
         drawCars();
     }
@@ -75,11 +67,11 @@ public class Simulator extends PApplet{
             y += 40;
             text("Car " + (i + 1) + ": ", 10, y);
             y += 20;
-            text("Position: " + simulatorCars.get(i).getPosition(), 10, y);
+            text("Position: " + (int) simulatorCars.get(i).getPosition().getY() / 20, 10, y);
             y += 20;
-            text("Velocity: " + simulatorCars.get(i).getVelocity(), 10, y);
+            text("Velocity: " + (int) simulatorCars.get(i).getVelocity().getY() / 20, 10, y);
             y += 20;
-            text("Acceleration: " +  simulatorCars.get(i).getAcceleration(), 10, y);
+            text("Acceleration: " + (int) simulatorCars.get(i).getAcceleration().getY() / 20, 10, y);
 
         }
     }
