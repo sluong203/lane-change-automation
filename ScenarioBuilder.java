@@ -4,7 +4,7 @@ public class ScenarioBuilder {
     public static ArrayList<Scenario> buildScenarios() {
         ArrayList<Scenario> scenarios = new ArrayList<Scenario>();
         for (int i = 0; i < 10; i++) {
-            int numCars = (int) (Math.random() * 3);
+            int numCars = 2;
             ArrayList<Car> cars = new ArrayList<Car>();
             Car attemptingCar = new Car(0, (int) (Math.random() * 36) + 25, (int) (Math.random() * 5) - 5, 5);
             cars.add(attemptingCar);

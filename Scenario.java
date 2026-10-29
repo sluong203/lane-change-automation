@@ -35,7 +35,7 @@ public class Scenario {
         SimulatorCar attemptingCar = new SimulatorCar(positionAC, velocityAC, accelerationAC, lengthAC);
         simulatorCars.add(attemptingCar);
 
-        for (int i = 1; i < cars.size() - 1; i++) {
+        for (int i = 1; i <= cars.size() - 1; i++) {
             Vector2D position = new Vector2D(500, 20 * (positionAC.getY() + cars.get(i).getDistance()));
             Vector2D velocity = new Vector2D(0, 20 * (cars.get(i).getVelocity()));
             Vector2D acceleration = new Vector2D(0, 20 * (cars.get(i).getAcceleration()));
