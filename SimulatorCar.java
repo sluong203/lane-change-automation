@@ -16,8 +16,8 @@ public class SimulatorCar {
     }
 
     public void update(double time) {
-        double positionX = position.getX() + (velocity.getX() * time) + (0.5 * Math.pow(acceleration.getX(), 2) * time);
-        double positionY = position.getY() + (velocity.getY() * time) + (0.5 * Math.pow(acceleration.getY(), 2) * time);
+        double positionX = position.getX() + (velocity.getX() * time) + (0.5 * acceleration.getX() * Math.pow(time, 2));
+        double positionY = position.getY() + (velocity.getY() * time) + (0.5 * acceleration.getY() * Math.pow(time, 2));
         double velocityX = velocity.getX() + (acceleration.getX() * time);
         double velocityY = velocity.getY() + (acceleration.getY() * time);
         velocity.setX(velocityX);

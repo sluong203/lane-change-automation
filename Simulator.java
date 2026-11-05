@@ -4,7 +4,7 @@ public class Simulator extends PApplet{
     private int canvasWidth = 800;
     private int canvasHeight = 1000;
     private int numCars = 3;
-    double timeScale = 0.0005;
+    double timeScale = 0.005;
     double time = 0;
     private ArrayList<SimulatorCar> simulatorCars;
     private ArrayList<Scenario> scenarios;
@@ -32,11 +32,15 @@ public class Simulator extends PApplet{
 
         drawLanes();
         time++;
+//
+//        if(simulatorCars.get(1) ) {
+//
+//        }
 
         for(SimulatorCar car : simulatorCars) {
             displayStats();
             car.update((time / 60.0) * timeScale);
-            drawCars();
+
         }
     }
 
