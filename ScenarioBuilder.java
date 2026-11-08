@@ -9,7 +9,7 @@ public class ScenarioBuilder {
             Car attemptingCar = new Car(0, (int) (Math.random() * 36) + 25, (int) (Math.random() * 5) - 5, 5);
             cars.add(attemptingCar);
             double displayTime = quadForm(.5 * attemptingCar.getAcceleration(), attemptingCar.getVelocity(), -50);
-
+            String test = "lalalalalalalalalalaaaa";
             if(numCars == 1) {
                 Car newCar = new Car((int) (Math.random() * 8) - 8, (int) (Math.random() * 36) + 25, (int) (Math.random() * 5) - 5, 5);
                 cars.add(newCar);
