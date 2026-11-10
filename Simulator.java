@@ -6,6 +6,7 @@ public class Simulator extends PApplet{
     private int numCars = 3;
     double timeScale = 0.005;
     double time = 0;
+    int scenarioIndex = 0;
     private ArrayList<SimulatorCar> simulatorCars;
     private ArrayList<Scenario> scenarios;
 
@@ -22,31 +23,36 @@ public class Simulator extends PApplet{
 
         scenarios = ScenarioBuilder.buildScenarios();
 
-        simulatorCars = scenarios.get(0).getCars();
+        scenarioIndex = 0;
+        simulatorCars = scenarios.get(scenarioIndex).getCars();
 
         drawCars();
     }
 
     public void draw() {
-        background(255);
+        if(simulatorCars.get(simulatorCars.size() - 1).getPosition().getY() > 1000 ) {
+            background(255);
 
-        drawLanes();
-        time++;
-//
-//        if(simulatorCars.get(1) ) {
-//
-//        }
+            drawLanes();
+            time = 0;
+            scenarioIndex++;
+            simulatorCars = scenarios.get(scenarioIndex).getCars();
+            drawCars();
+        } else {
+            background(255);
 
-        for(SimulatorCar car : simulatorCars) {
+            drawLanes();
+            time++;
+
+            for(SimulatorCar car : simulatorCars) {
+
+                car.update((time / 60.0) * timeScale);
+                drawCars();
+            }
             displayStats();
-            car.update((time / 60.0) * timeScale);
-
         }
-    }
 
-//    public void drawScenario() {
-//
-//    }
+    }
 
     public void drawLanes () {
         line(200, 0, 200, 1000);
@@ -69,7 +75,16 @@ public class Simulator extends PApplet{
         text("Time: " + time, 10, y);
         for(int i = 0; i < simulatorCars.size(); i++) {
             y += 40;
+//            if (i == 0) {
+//                text("Attempting Car" + ": ", 10, y);
+//            } else if (i == 1) {
+//                text("Preceding Car" + ": ", 10, y);
+//            } else if (i == 2) {
+//
+//            }
+
             text("Car " + (i + 1) + ": ", 10, y);
+
             y += 20;
             text("Position: " + (int) simulatorCars.get(i).getPosition().getY() / 20, 10, y);
             y += 20;

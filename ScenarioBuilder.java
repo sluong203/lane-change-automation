@@ -3,12 +3,14 @@ import java.util.ArrayList;
 public class ScenarioBuilder {
     public static ArrayList<Scenario> buildScenarios() {
         ArrayList<Scenario> scenarios = new ArrayList<Scenario>();
-        for (int i = 0; i < 10; i++) {
-            int numCars = 2;
+        int numScenarios = 20;
+
+        while (scenarios.size() < numScenarios) {
+            int numCars = (int) (Math.random() * 2);
+            //
             ArrayList<Car> cars = new ArrayList<Car>();
-            Car attemptingCar = new Car(0, (int) (Math.random() * 36) + 25, (int) (Math.random() * 5) - 5, 5);
+            Car attemptingCar = new Car(0, (int) (Math.random() * 36) + 25, 0, 5);
             cars.add(attemptingCar);
-            double displayTime = quadForm(.5 * attemptingCar.getAcceleration(), attemptingCar.getVelocity(), -50);
 
             if(numCars == 1) {
                 Car newCar = new Car((int) (Math.random() * 8) - 8, (int) (Math.random() * 36) + 25, (int) (Math.random() * 5) - 5, 5);
@@ -25,19 +27,14 @@ public class ScenarioBuilder {
                 int followingCarAcceleration = (int) (Math.random() * 5) - 5;
                 Car followingCar = new Car(-followingCarDistance, followingCarVelocity, followingCarAcceleration, 5);
 
-                boolean collision = false;
-                int j = 0;
+                double displayTime = quadForm(.5 * followingCar.getAcceleration(), followingCar.getVelocity(), -50);
 
-                while(collision == false && j < displayTime) {
-                    double followingCarFrontFinalPosition = (followingCarVelocity * j) + (0.5 * followingCarAcceleration * Math.pow(j, 2)) + (0.5 * followingCar.getLength()) - followingCarDistance;
-                    double precedingCarBackFinalPosition = (precedingCarVelocity * j) + (0.5 * precedingCarAcceleration * Math.pow(j, 2)) - (0.5 * precedingCar.getLength()) + precedingCarDistance;
-                    if(followingCarFrontFinalPosition >= precedingCarBackFinalPosition) {
-                        collision = true;
-                    }
-                    j++;
-                }
+                double followingCarFrontInitialPosition = followingCar.getDistance() + 0.5 * followingCar.getLength();
+                double precedingCarBackInitialPosition = precedingCar.getDistance() - 0.5 * precedingCar.getLength();
+                double followingCarFrontFinalPosition = (followingCarVelocity * displayTime) + (0.5 * followingCarAcceleration * Math.pow(displayTime, 2)) + (0.5 * followingCar.getLength()) - followingCarDistance;
+                double precedingCarBackFinalPosition = (precedingCarVelocity * displayTime) + (0.5 * precedingCarAcceleration * Math.pow(displayTime, 2)) - (0.5 * precedingCar.getLength()) + precedingCarDistance;
 
-                if (collision == false){
+                if (followingCarFrontFinalPosition < precedingCarBackFinalPosition && followingCarFrontInitialPosition < precedingCarBackInitialPosition){
                     cars.add(precedingCar);
                     cars.add(followingCar);
                     scenarios.add(new Scenario(cars));

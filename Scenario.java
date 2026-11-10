@@ -4,8 +4,9 @@ public class Scenario {
     private ArrayList<Car> cars; // first car is the one that is changing lane, must have at least 1 car, second car should be PC
     private int accelerationSignPC; // 1 for positive, -1 for negative, 0 for 0
     private int accelerationSignFC;
-    private boolean inTheWay;
     private int targetLaneNumCars;
+    private int double timeNeeded;
+    private int double accelerationNeeded;
 
     public Scenario(ArrayList<Car> cars) {
         this.cars = cars;
@@ -23,14 +24,13 @@ public class Scenario {
             accelerationSignFC = (int) (cars.get(1).getAcceleration() / Math.abs(cars.get(1).getAcceleration()));
         }
 
-        inTheWay = false;
     }
 
     public ArrayList<SimulatorCar> getCars() {
         ArrayList<SimulatorCar> simulatorCars = new ArrayList<SimulatorCar>();
         Vector2D positionAC = new Vector2D(300, 0);
         Vector2D velocityAC = new Vector2D(0, cars.get(0).getVelocity() * 20);
-        Vector2D accelerationAC = new Vector2D(0, cars.get(0).getAcceleration() * 20);
+        Vector2D accelerationAC = new Vector2D(0, accelerationNeeded * 20);
         double lengthAC = cars.get(0).getLength() * 20;
         SimulatorCar attemptingCar = new SimulatorCar(positionAC, velocityAC, accelerationAC, lengthAC);
         simulatorCars.add(attemptingCar);
