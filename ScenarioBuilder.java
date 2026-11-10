@@ -33,7 +33,7 @@ public class ScenarioBuilder {
                 double precedingCarBackInitialPosition = precedingCar.getDistance() - 0.5 * precedingCar.getLength();
                 double followingCarFrontFinalPosition = (followingCarVelocity * displayTime) + (0.5 * followingCarAcceleration * Math.pow(displayTime, 2)) + (0.5 * followingCar.getLength()) - followingCarDistance;
                 double precedingCarBackFinalPosition = (precedingCarVelocity * displayTime) + (0.5 * precedingCarAcceleration * Math.pow(displayTime, 2)) - (0.5 * precedingCar.getLength()) + precedingCarDistance;
-
+                int five = 5;
                 if (followingCarFrontFinalPosition < precedingCarBackFinalPosition && followingCarFrontInitialPosition < precedingCarBackInitialPosition){
                     cars.add(precedingCar);
                     cars.add(followingCar);
