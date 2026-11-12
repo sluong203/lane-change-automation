@@ -7,7 +7,6 @@ public class ScenarioBuilder {
 
         while (scenarios.size() < numScenarios) {
             int numCars = (int) (Math.random() * 2);
-            //
             ArrayList<Car> cars = new ArrayList<Car>();
             Car attemptingCar = new Car(0, (int) (Math.random() * 36) + 25, 0, 5);
             cars.add(attemptingCar);
@@ -33,7 +32,6 @@ public class ScenarioBuilder {
                 double precedingCarBackInitialPosition = precedingCar.getDistance() - 0.5 * precedingCar.getLength();
                 double followingCarFrontFinalPosition = (followingCarVelocity * displayTime) + (0.5 * followingCarAcceleration * Math.pow(displayTime, 2)) + (0.5 * followingCar.getLength()) - followingCarDistance;
                 double precedingCarBackFinalPosition = (precedingCarVelocity * displayTime) + (0.5 * precedingCarAcceleration * Math.pow(displayTime, 2)) - (0.5 * precedingCar.getLength()) + precedingCarDistance;
-                int five = 5;
                 if (followingCarFrontFinalPosition < precedingCarBackFinalPosition && followingCarFrontInitialPosition < precedingCarBackInitialPosition){
                     cars.add(precedingCar);
                     cars.add(followingCar);

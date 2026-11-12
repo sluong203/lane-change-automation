@@ -5,8 +5,8 @@ public class Scenario {
     private int accelerationSignPC; // 1 for positive, -1 for negative, 0 for 0
     private int accelerationSignFC;
     private int targetLaneNumCars;
-//    private int double timeNeeded;
-//    private int double accelerationNeeded;
+    private double timeNeeded;
+    private double accelerationNeeded;
 
     public Scenario(ArrayList<Car> cars) {
         this.cars = cars;
@@ -24,13 +24,30 @@ public class Scenario {
             accelerationSignFC = (int) (cars.get(1).getAcceleration() / Math.abs(cars.get(1).getAcceleration()));
         }
 
+        LaneChange laneChange = new LaneChange(cars.get(0).getVelocity(), cars.get(0).getLength());
+
+        if(targetLaneNumCars == 1) {
+            if (cars.get(1).getDistance() >= 0) {
+                laneChange.setPrecedingCar(cars.get(1));
+            } else {
+                laneChange.setFollowingCar(cars.get(1));
+            }
+        } else {
+            laneChange.setPrecedingCar(cars.get(1));
+            laneChange.setFollowingCar(cars.get(2));
+        }
+
+        FactorSet factorsNeeded = laneChange.getFactorsNeeded();
+
+        timeNeeded = factorsNeeded.getTimeNeeded();
+        accelerationNeeded = factorsNeeded.getAccelerationNeeded();
     }
 
-    public ArrayList<SimulatorCar> getCars() {
+    public ArrayList<SimulatorCar> getSimulatorCars() {
         ArrayList<SimulatorCar> simulatorCars = new ArrayList<SimulatorCar>();
         Vector2D positionAC = new Vector2D(300, 0);
         Vector2D velocityAC = new Vector2D(0, cars.get(0).getVelocity() * 20);
-        Vector2D accelerationAC = new Vector2D(0, 0);
+        Vector2D accelerationAC = new Vector2D(0, accelerationNeeded);
         double lengthAC = cars.get(0).getLength() * 20;
         SimulatorCar attemptingCar = new SimulatorCar(positionAC, velocityAC, accelerationAC, lengthAC);
         simulatorCars.add(attemptingCar);
@@ -46,5 +63,9 @@ public class Scenario {
 
         return simulatorCars;
 
+    }
+
+    public double getTimeNeeded() {
+        return timeNeeded;
     }
 }

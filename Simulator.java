@@ -9,6 +9,7 @@ public class Simulator extends PApplet{
     int scenarioIndex = 0;
     private ArrayList<SimulatorCar> simulatorCars;
     private ArrayList<Scenario> scenarios;
+    private FactorSet factorsNeeded;
 
     public static void main(String[] args){
         PApplet.main("Simulator");
@@ -24,7 +25,7 @@ public class Simulator extends PApplet{
         scenarios = ScenarioBuilder.buildScenarios();
 
         scenarioIndex = 0;
-        simulatorCars = scenarios.get(scenarioIndex).getCars();
+        simulatorCars = scenarios.get(scenarioIndex).getSimulatorCars();
 
         drawCars();
     }
@@ -36,7 +37,7 @@ public class Simulator extends PApplet{
             drawLanes();
             time = 0;
             scenarioIndex++;
-            simulatorCars = scenarios.get(scenarioIndex).getCars();
+            simulatorCars = scenarios.get(scenarioIndex).getSimulatorCars();
             drawCars();
         } else {
             background(255);
@@ -45,8 +46,10 @@ public class Simulator extends PApplet{
             time++;
 
             for(SimulatorCar car : simulatorCars) {
-
-                car.update((time / 60.0) * timeScale);
+                double realTime = (time / 60.0) * timeScale;if(car.equals(simulatorCars.get(0)) && realTime == scenarios.get(scenarioIndex).getTimeNeeded()) {
+                    car.changeLanes();
+                }
+                car.update(realTime);
                 drawCars();
             }
             displayStats();

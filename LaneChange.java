@@ -18,6 +18,13 @@ public class LaneChange {
         this.velocity = velocity;
         this.length = length;
     }
+
+    public LaneChange(double velocity, double length) {
+        this.precedingCar = null;
+        this.followingCar = null;
+        this.velocity = velocity;
+        this.length = length;
+    }
     
     /**
      * Outputs the factors needed for a safe and successful lane change
@@ -26,10 +33,13 @@ public class LaneChange {
      * 
      * @return  a String containing the acceleration (m/s^2) and amount of time (s) needed and before 
      * changing lanes
+     *
+     * if the class returns null, then the lane change is impossible with the current conditions
      */
-    public String factorsNeeded() {
+    public FactorSet getFactorsNeeded() {
         if(precedingCar == null && followingCar == null) {
-            return("Time: 0.0\nAcceleration: 0.0");
+            FactorSet factorsNeeded = new FactorSet(0,0.0);
+            return factorsNeeded;
         } else if (precedingCar != null || followingCar != null) {
             Car presentCar;
             if(precedingCar != null) {
@@ -39,26 +49,32 @@ public class LaneChange {
             }
             if(carInWay(presentCar)) { //the present car is in the way
                 if(presentCar.acceleration == 0) {
-                    return("Time: 0.0\nAcceleration: " + accelerationNeeded(presentCar, 6));
+                    FactorSet factorsNeeded = new FactorSet(0.0,accelerationNeeded(presentCar, 6));
+                    return factorsNeeded;
                 } else {
-                    return("Time: " + timeTillSafe(presentCar) + "\nAcceleration: 0.0");
+                    FactorSet factorsNeeded = new FactorSet(timeTillSafe(presentCar),0.0);
+                    return factorsNeeded;
                     //need to wait for preceding car clears current car
                 }
             } else { // the present car is not in the way
                 if(closingIn(presentCar)) {
                     if(staysOutOfWay(presentCar, this.velocity * 3, 6)) {
-                        return("Time: 0.0\nAcceleration: 0.0");
+                        FactorSet factorsNeeded = new FactorSet(0.0,0.0);
+                        return factorsNeeded;
                     } else {
-                        return ("The other car(s) need to change acceleration.");
+                        FactorSet factorsNeeded = new FactorSet();
+                        return factorsNeeded;
                     }
                 } else {
-                   return("Time: 0.0\nAcceleration: 0.0"); 
+                    FactorSet factorsNeeded = new FactorSet(0.0,0.0);
+                    return factorsNeeded;
                 }
             }
         } else { //both cars are present
             if (carInWay(precedingCar) && carInWay(followingCar)) { //both cars are in the way
                 if (precedingCar.acceleration == 0 && followingCar.acceleration == 0) {
-                    return ("The other car(s) need to change acceleration.");
+                    FactorSet factorsNeeded = new FactorSet();
+                    return factorsNeeded;
                 } else if (precedingCar.acceleration == 0 || followingCar.acceleration == 0) {
                     Car acceleratingCar;
                     Car nonAcceleratingCar;
@@ -70,23 +86,26 @@ public class LaneChange {
                         nonAcceleratingCar = precedingCar;
                     }
                     if(!closingIn(acceleratingCar)){
-                        return("Time: " + timeTillSafe(acceleratingCar) + 
-                               "\nAcceleration: " + accelerationNeeded(nonAcceleratingCar, 
-                                                                       timeTillSafe(acceleratingCar)));
+                        FactorSet factorsNeeded = new FactorSet(timeTillSafe(acceleratingCar),accelerationNeeded(nonAcceleratingCar, timeTillSafe(acceleratingCar)));
+                        return factorsNeeded;
                     }
                 } else {
                     if(!closingIn(precedingCar) && !closingIn(followingCar)) {
                         double timeFC = timeTillSafe(followingCar);
                         double timePC = timeTillSafe(precedingCar);
                         if (timePC > timeFC) {
-                            return("Time: " + timePC + "\nAcceleration: 0.0");
+                            FactorSet factorsNeeded = new FactorSet(timePC,0.0);
+                            return factorsNeeded;
                         } else {
-                            return("Time: " + timeFC + "\nAcceleration: 0.0");
+                            FactorSet factorsNeeded = new FactorSet(timeFC,0.0);
+                            return factorsNeeded;
                         }
                     } else if(closingIn(precedingCar) && !closingIn(followingCar)) {
-                        return("Time: " + timeTillSafe(precedingCar) + "\nAcceleration: 0.0"); 
+                        FactorSet factorsNeeded = new FactorSet(timeTillSafe(precedingCar),0.0);
+                        return factorsNeeded;
                     } else if (!closingIn(precedingCar) && closingIn(followingCar)) {
-                        return("Time: " + timeTillSafe(followingCar) + "\nAcceleration: 0.0");
+                        FactorSet factorsNeeded = new FactorSet(timeTillSafe(followingCar),0.0);
+                        return factorsNeeded;
                     }
                 }
             } else if(carInWay(precedingCar) || carInWay(followingCar)) { // one car is in the way
@@ -102,43 +121,52 @@ public class LaneChange {
                                  Math.abs(blockingCar.distance);
                 if(blockingCar.acceleration == 0 && nonBlockingCar.acceleration == 0) {
                     if(gap >= overlap + this.velocity * 3) {
-                        return("Time: 0.0" + "\nAcceleration: " + accelerationNeeded(blockingCar, 6));
+                        FactorSet factorsNeeded = new FactorSet(0.0,accelerationNeeded(blockingCar, 6));
+                        return factorsNeeded;
                     }
                 } else if (blockingCar.acceleration != 0 && nonBlockingCar.acceleration == 0) {
                     if(!closingIn(blockingCar)) {
-                        return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
+                        FactorSet factorsNeeded = new FactorSet(timeTillSafe(blockingCar),0.0);
+                        return factorsNeeded;
                     } else {
                         if(gap >= blockingCar.length + 2 * (this.velocity * 3)) {
-                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
+                            FactorSet factorsNeeded = new FactorSet(timeTillSafe(blockingCar),0.0);
+                            return factorsNeeded;
                         }
                     }
                 } else if (blockingCar.acceleration == 0 && nonBlockingCar.acceleration != 0) {
                     if(staysOutOfWay(nonBlockingCar, overlap + this.velocity * 3, 6)) {
-                        return("Time: 0.0" + "\nAcceleration: " + accelerationNeeded(blockingCar, 6));
+                        FactorSet factorsNeeded = new FactorSet(0.0,accelerationNeeded(blockingCar, 6));
+                        return factorsNeeded;
                     }
                 } else {
                     if(signsMatch(blockingCar.acceleration, nonBlockingCar.acceleration)) {
                         if(!closingIn(nonBlockingCar)) {
-                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
+                            FactorSet factorsNeeded = new FactorSet(timeTillSafe(blockingCar),0.0);
+                            return factorsNeeded;
                         } else {
                             if(staysOutOfWay(nonBlockingCar, this.velocity * 3, timeTillSafe(blockingCar))) {
-                                return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
+                                FactorSet factorsNeeded = new FactorSet(timeTillSafe(blockingCar),0.0);
+                                return factorsNeeded;
                             }
                         }
                     } else {
                         if(!closingIn(nonBlockingCar)) {
-                            return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
+                            FactorSet factorsNeeded = new FactorSet(timeTillSafe(blockingCar),0.0);
+                            return factorsNeeded;
                         } else {
                             if(staysOutOfWay(nonBlockingCar, blockingCar.length + 2 * (this.velocity * 3), 
                                              timeTillSafe(blockingCar))) {
-                                return("Time: " + timeTillSafe(blockingCar) + "\nAcceleration: 0.0");
+                                FactorSet factorsNeeded = new FactorSet(timeTillSafe(blockingCar),0.0);
+                                return factorsNeeded;
                             }
                         }
                     }
                 }
             } else {
                 if(precedingCar.acceleration == 0 && followingCar.acceleration == 0) {
-                    return("Time: 0.0\nAcceleration: 0.0");
+                    FactorSet factorsNeeded = new FactorSet(0.0,0.0);
+                    return factorsNeeded;
                 } else if (precedingCar.acceleration == 0 || followingCar.acceleration == 0) {
                     Car acceleratingCar;
                     Car nonAcceleratingCar;
@@ -150,30 +178,36 @@ public class LaneChange {
                         nonAcceleratingCar = precedingCar;
                     }
                     if(!closingIn(acceleratingCar)) {
-                        return("Time: 0.0\nAcceleration: 0.0");
+                        FactorSet factorsNeeded = new FactorSet(0.0,0.0);
+                        return factorsNeeded;
                     } else {
                         if(staysOutOfWay(acceleratingCar, this.velocity * 3, 6)) {
-                            return("Time: 0.0\nAcceleration: 0.0"); 
+                            FactorSet factorsNeeded = new FactorSet(0.0,0.0);
+                            return factorsNeeded;
                         }
                     }
                 } else {
                     if(!closingIn(precedingCar) && !closingIn(followingCar)) {
-                            return("Time: 0.0\nAcceleration: 0.0");
+                        FactorSet factorsNeeded = new FactorSet(0.0,0.0);
+                        return factorsNeeded;
                     } else if (closingIn(precedingCar) && closingIn(followingCar)) {
                         if(staysOutOfWay(followingCar, this.velocity * 3, 6) && 
                            staysOutOfWay(precedingCar, this.velocity * 3, 6)) {
-                            return("Time: 0.0\nAcceleration: 0.0");
+                            FactorSet factorsNeeded = new FactorSet(0.0,0.0);
+                            return factorsNeeded;
                         }
                     } else {
                         if(staysOutOfWay(followingCar, this.velocity * 3, 6)) {
-                            return("Time: 0.0\nAcceleration: 0.0");
+                            FactorSet factorsNeeded = new FactorSet(0.0,0.0);
+                            return factorsNeeded;
                         }
                     }
                 }
             }
         }
         
-        return ("The other car(s) need to change acceleration."); 
+        FactorSet factorsNeeded = new FactorSet();
+        return factorsNeeded;
     }
     
     /**
@@ -268,7 +302,15 @@ public class LaneChange {
             return solutionTwo;
         }
     }
-    
+
+    public void setPrecedingCar(Car precedingCar) {
+        this.precedingCar = precedingCar;
+    }
+
+    public void setFollowingCar(Car followingCar) {
+        this.followingCar = followingCar;
+    }
+
     /**
      * Gives the properties of the attempting car and the other relevant cars in the lane change
      * 
